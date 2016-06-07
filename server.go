@@ -8,7 +8,6 @@ import (
 	"encoding/gob"
 	"encoding/hex"
 	"fmt"
-	"log"
 
 	"github.com/dgryski/dgoogauth"
 	"github.com/gin-gonic/contrib/sessions"
@@ -43,7 +42,7 @@ func generateSecret() (secret string, err error) {
 func handlergenQrCode(c *gin.Context) {
 	var err error
 	data := struct {
-		user string `binding:"required"`
+		User string `binding:"required"`
 	}{}
 	if err = c.Bind(&data); err != nil {
 		return
@@ -54,9 +53,6 @@ func handlergenQrCode(c *gin.Context) {
 	if err != nil {
 		return
 	}
-
-	fmt.Println(secret)
-
 	config := dgoogauth.OTPConfig{
 		Secret:     secret,
 		WindowSize: OTPConfigWindowSize,
@@ -65,19 +61,16 @@ func handlergenQrCode(c *gin.Context) {
 
 	// gen qrcode
 	hasher := md5.New()
-	hasher.Write([]byte(data.user))
+	hasher.Write([]byte(data.User))
 	filename := hex.EncodeToString(hasher.Sum(nil)) + ".png"
 	// gen url
-	url := config.ProvisionURIWithIssuer(data.user, "otpDemo")
-	log.Println(url)
+	url := config.ProvisionURIWithIssuer(data.User, "otpDemo")
 	// gen & save qrcode
 	err = qrcode.WriteFile(url, qrcode.Medium, 256, "./public/qrcodes/"+filename)
 	// save OTPConfig in session (don't do this at /home !)
 	session := sessions.Default(c)
 	session.Set("optconfig", config)
-	err = session.Save()
-	fmt.Println(err)
-
+	session.Save()
 	c.JSON(200, JSONResponse{true, filename})
 }
 
@@ -85,7 +78,7 @@ func handlergenQrCode(c *gin.Context) {
 func handlerCheckCode(c *gin.Context) {
 	var err error
 	data := struct {
-		code string `binding:"required"`
+		Code string `binding:"required"`
 	}{}
 	if err = c.Bind(&data); err != nil {
 		return
@@ -97,9 +90,7 @@ func handlerCheckCode(c *gin.Context) {
 		return
 	}
 	config := configInt.(dgoogauth.OTPConfig)
-	log.Println(configInt)
-	valid, err := config.Authenticate(data.code)
-	fmt.Println(err)
+	valid, err := config.Authenticate(data.Code)
 	if err != nil && err != dgoogauth.ErrInvalidCode {
 		c.JSON(400, JSONResponse{false, err.Error()})
 		return
@@ -113,6 +104,7 @@ func main() {
 	store := sessions.NewCookieStore([]byte("bigsecret"))
 	r.Use(sessions.Sessions("otp", store))
 	r.Static("/public", "./public")
+
 	// index
 	r.StaticFile("/", "./public/index.html")
 

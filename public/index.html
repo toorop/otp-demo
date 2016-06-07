@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Bootstrap 101 Template</title>
+    <title>One Time Password demo - Google Authenticator</title>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
@@ -21,11 +21,11 @@
 
 <body>
     <div class="container-fluid" style="padding: 20px;">
-        <h1>OTP demo</h1>
+        <h1>One Time Password demo</h1>
 
         <div id="step1" class="row">
-            <h3> Step 1: Login </h3>
-            <p>Enter a login/id and click "generate QR Code" button </p>
+            <h3> Step 1: Register </h3>
+            <p>Enter a login/user/id and click "generate QR Code" button </p>
             <form class="form-inline">
                 <div class="form-group">
                     <input type="text" class="form-control" id="inpLogin" placeholder="Enter a login...">
@@ -33,7 +33,7 @@
                 <button id="btnLogin" type="button" class="btn btn-primary">Generate QR Code</button>
             </form>
         </div>
-        <br>
+
         <div id="step2" class="row hidden">
             <h3> Step 2: Scan QR code</h3>
             <p>Open your OTP application, scan QR code below and click next button </p>
@@ -41,7 +41,7 @@
             <div class="col-md-1"></div>
             <button id='btnToStep3' type="submit" class="btn btn-primary">Next</button>
         </div>
-        <br>
+
         <div id="step3" class="row hidden">
             <h3> Step 3: Test codes</h3>
             <p>Enter code(s) to test and click "Test code" button</p>
@@ -52,6 +52,24 @@
                 <button id="btnTestCode" type="button" class="btn btn-primary">Test code</button>
             </form>
         </div>
+        <br>
+        <div id="result" class="row col-md-4 hidden">
+            <img id="imgResult" src="" class="img-responsive" alt="Responsive image">
+        </div>
+        
+        <div class="row col-md-12">
+            <br><br><br><br>
+            <h4>OTP Clients</h4>
+            <p><a href="https://support.google.com/accounts/answer/1066447?hl=fr" target="_blank">Google Authenticator (android, ios)</a></p>
+            <p><a href="https://www.authy.com/" target="_blank">Authy (android, ios, chrome)</a></p>
+            <br>
+            <h4>Source code</h4>
+            <p><a href="https://github.com/toorop/otp-demo" target="_blank">One Time Password demo with Golang</a></p>
+           
+        </div>
+
+
+
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
