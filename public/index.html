@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+        crossorigin="anonymous">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div class="container-fluid" style="padding: 20px;">
+        <h1>OTP demo</h1>
+
+        <div id="step1" class="row">
+            <h3> Step 1: Login </h3>
+            <p>Enter a login/id and click "generate QR Code" button </p>
+            <form class="form-inline">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="inpLogin" placeholder="Enter a login...">
+                </div>
+                <button id="btnLogin" type="button" class="btn btn-primary">Generate QR Code</button>
+            </form>
+        </div>
+        <br>
+        <div id="step2" class="row hidden">
+            <h3> Step 2: Scan QR code</h3>
+            <p>Open your OTP application, scan QR code below and click next button </p>
+            <img id="imgQRCode" src="/public/qrcode.png" class="img-responsive" alt="Responsive image">
+            <div class="col-md-1"></div>
+            <button type="submit" class="btn btn-primary">Next</button>
+        </div>
+        <br>
+        <div id="step3" class="row hidden">
+            <h3> Step 3: Test codes</h3>
+            <p>Enter code(s) to test and click "Test code" button</p>
+            <form class="form-inline">
+                <div class="form-group">
+                    <input id="inpCode" type="text" class="form-control" placeholder="Code...">
+                </div>
+                <button id="btnCode" type="button" class="btn btn-primary">Test code</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous"></script>
+    <script src="/public/app.js"></script>
+</body>
+
+</html>
