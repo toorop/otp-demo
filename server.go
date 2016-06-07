@@ -6,6 +6,7 @@ import (
 	"crypto/sha1"
 	"encoding/base32"
 	"encoding/hex"
+	"fmt"
 	"io"
 
 	"github.com/dgryski/dgoogauth"
@@ -39,10 +40,11 @@ func generateSecret() (secret string, err error) {
 
 // Step 1: init OTPconfig en generate QRRCode
 func handlergenQrCode(c *gin.Context) {
+	var err error
 	data := struct {
 		user string `binding:"required"`
 	}{}
-	if err := c.Bind(&data); err != nil {
+	if err = c.Bind(&data); err != nil {
 		return
 	}
 
@@ -71,7 +73,30 @@ func handlergenQrCode(c *gin.Context) {
 	session.Set("optconfig", config)
 	session.Save()
 	c.JSON(200, JSONResponse{true, filename})
+}
 
+// step 3 check code
+func handlerCheckCode(c *gin.Context) {
+	var err error
+	data := struct {
+		code string `binding:"required"`
+	}{}
+	if err = c.Bind(&data); err != nil {
+		return
+	}
+	session := sessions.Default(c)
+	configInt := session.Get("optconfig")
+	if configInt == nil {
+		c.JSON(400, JSONResponse{false, "no OTPConfing found on session"})
+		return
+	}
+	config := configInt.(dgoogauth.OTPConfig)
+	valid, err := config.Authenticate(data.code)
+	if err != nil {
+		c.JSON(400, JSONResponse{false, "no OTPConfing found on session"})
+		return
+	}
+	c.JSON(200, JSONResponse{true, fmt.Sprintf("%t", valid)})
 }
 
 func main() {
@@ -84,6 +109,9 @@ func main() {
 
 	// gen qrcode
 	r.POST("/aj/genQRCode", handlergenQrCode)
+
+	// check code
+	r.POST("/aj/checkCode", handlerCheckCode)
 
 	//r.GET("/", handlerIndex)
 	r.Run() // listen and server on 0.0.0.0:8080
