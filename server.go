@@ -5,9 +5,10 @@ import (
 	"crypto/rand"
 	"crypto/sha1"
 	"encoding/base32"
+	"encoding/gob"
 	"encoding/hex"
 	"fmt"
-	"io"
+	"log"
 
 	"github.com/dgryski/dgoogauth"
 	"github.com/gin-gonic/contrib/sessions"
@@ -30,7 +31,7 @@ type JSONResponse struct {
 func generateSecret() (secret string, err error) {
 	var key []byte
 	key = make([]byte, sha1.Size)
-	_, err = io.ReadFull(rand.Reader, key)
+	_, err = rand.Read(key)
 	if err != nil {
 		return
 	}
@@ -54,6 +55,8 @@ func handlergenQrCode(c *gin.Context) {
 		return
 	}
 
+	fmt.Println(secret)
+
 	config := dgoogauth.OTPConfig{
 		Secret:     secret,
 		WindowSize: OTPConfigWindowSize,
@@ -66,12 +69,15 @@ func handlergenQrCode(c *gin.Context) {
 	filename := hex.EncodeToString(hasher.Sum(nil)) + ".png"
 	// gen url
 	url := config.ProvisionURIWithIssuer(data.user, "otpDemo")
+	log.Println(url)
 	// gen & save qrcode
 	err = qrcode.WriteFile(url, qrcode.Medium, 256, "./public/qrcodes/"+filename)
 	// save OTPConfig in session (don't do this at /home !)
 	session := sessions.Default(c)
 	session.Set("optconfig", config)
-	session.Save()
+	err = session.Save()
+	fmt.Println(err)
+
 	c.JSON(200, JSONResponse{true, filename})
 }
 
@@ -91,15 +97,18 @@ func handlerCheckCode(c *gin.Context) {
 		return
 	}
 	config := configInt.(dgoogauth.OTPConfig)
+	log.Println(configInt)
 	valid, err := config.Authenticate(data.code)
-	if err != nil {
-		c.JSON(400, JSONResponse{false, "no OTPConfing found on session"})
+	fmt.Println(err)
+	if err != nil && err != dgoogauth.ErrInvalidCode {
+		c.JSON(400, JSONResponse{false, err.Error()})
 		return
 	}
 	c.JSON(200, JSONResponse{true, fmt.Sprintf("%t", valid)})
 }
 
 func main() {
+	gob.Register(dgoogauth.OTPConfig{})
 	r := gin.Default()
 	store := sessions.NewCookieStore([]byte("bigsecret"))
 	r.Use(sessions.Sessions("otp", store))
